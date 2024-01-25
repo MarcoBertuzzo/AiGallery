@@ -9,7 +9,12 @@
 <PageTitle>@TitleService.GetTitle(ImageStripId)</PageTitle>
 
 <HeadContent>
-    <meta property="og:title" content="@TitleService.GetTitle(ImageStripId)" id="ogTitle" />
+        <meta property="og:title" content="@TitleService.GetTitle(ImageStripId)" id="metaOgTitle" />
+        <meta name="description" content="AiGallery, @TitleService.GetTitle(ImageStripId)" id="metaDescription" />
+        <meta property="og:description" content="AiGallery, @TitleService.GetTitle(ImageStripId)" id="metaOgDescription" />
+        <meta property="og:url" content="@NavigationManager.Uri" id="metaOgUrl" />
+        <meta property="og:image" content="@TitleService.GetMainImageUrl(ImageStripId)" id="metaOgImage" />
+
 </HeadContent>
 
 

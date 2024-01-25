@@ -21,7 +21,7 @@
                     <li @onkeydown="HandleKeyDown">
                         <figure>
                             <figcaption>@GetImageDescription(image)</figcaption>
-                            <img src="@image.RelativePath" alt="@GetImageDescription(image)" />
+                            <img src="@image.RelativePath" alt="@GetImageDescription(image)" class="img-strip" />
                     
                         </figure>
                     </li>
@@ -89,7 +89,7 @@
     {
         if (ImageStripId > 0)
         {
-            Images = await DbManager.getStripImages(ImageStripId, myDbContext);
+            Images = await DbManager.getStripImagesAsync(ImageStripId, myDbContext);
         }
     }
 

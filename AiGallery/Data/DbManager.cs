@@ -82,7 +82,7 @@ namespace AiGallery.Data
         /// <param name="stripId">Id of the Strip</param>
         /// <param name="myDbContext">DbContext</param>
         /// <returns>Requested list of images</returns>
-        public static async Task<List<Image>> getStripImages(int stripId,  MyDbContext myDbContext)
+        public static async Task<List<Image>> getStripImagesAsync(int stripId,  MyDbContext myDbContext)
         {
             var stripImages = await myDbContext.Images
                 .Where(s => s.StripId == stripId)
@@ -99,6 +99,22 @@ namespace AiGallery.Data
             return stripImages;
         }
 
+        public static List<Image> getStripImages(int stripId, MyDbContext myDbContext)
+        {
+            var stripImages = myDbContext.Images
+                .Where(s => s.StripId == stripId)
+                .OrderBy(s => s.Id)
+                .Select(s => new Image
+                {
+                    StripId = s.StripId,
+                    Id = s.Id,
+                    RelativePath = "/ImagesStrips/" + s.StripId.ToString("000000") + "/" + s.Id.ToString() + ".jpg",
+                    Description_Eng = s.Description_Eng,
+                    Description_Ita = s.Description_Ita,
+                })
+                .ToList();
+            return stripImages;
+        }
 
         /// <summary>
         /// Get the title of a Strip in a given language

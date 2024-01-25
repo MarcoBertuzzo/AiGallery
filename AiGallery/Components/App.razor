@@ -23,10 +23,27 @@
         function changeDocumentTitle(newTitle) {
             document.title = newTitle;
 
-            var ogTitleElement = document.getElementById('ogTitle');
-            if (ogTitleElement) {
-                ogTitleElement.setAttribute('content', newTitle);
-            }
+            var element = document.getElementById('metaOgTitle');
+            if (element) element.setAttribute('content', newTitle);
+            
+            element = document.getElementById('metaOgDescription');
+            if (element) element.setAttribute('content', newTitle);
+
+            element = document.getElementById('metaDescription');
+            if (element) element.setAttribute('content', newTitle);
+            
+            element = document.getElementById('metaOgImage');
+            var element2 = document.querySelector('.img-strip');
+            if (element && element2) 
+                element.setAttribute('content', element2.src);
+            else
+                element.setAttribute('content', '');
+
+            element = document.getElementById('metaOgUrl');
+            if (element) element.setAttribute('content', window.location.href);
+
+            
+
         }
     </script>
 

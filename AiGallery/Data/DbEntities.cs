@@ -16,9 +16,9 @@ namespace AiGallery.Data
             [Key]
             public int Id { get; set; }
             [Required]
-            public string Title_Eng { get; set; } = default!;
+            public string Title_Eng { get; set; } = "a";
             [Required]
-            public string Title_Ita { get; set; } = default!;
+            public string Title_Ita { get; set; } = "a";
             public int ViewsCounter { get; set; }
             public DateTime? LastView { get; set; }
         }

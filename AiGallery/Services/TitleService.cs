@@ -1,5 +1,9 @@
 ﻿using AiGallery.Data;
+using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
+
+
 
 namespace AiGallery.Services
 {
@@ -13,13 +17,14 @@ namespace AiGallery.Services
         private readonly MyDbContext _dbContext;
         private readonly IJSRuntime _jsRuntime;
         private readonly LanguageService _languageService;
+        private readonly NavigationManager _navigationManager;
 
-        public TitleService(MyDbContext dbContext, IJSRuntime jsRuntime, LanguageService languageService)
+        public TitleService(MyDbContext dbContext, IJSRuntime jsRuntime, LanguageService languageService, NavigationManager navigationManager)
         {
             _dbContext = dbContext;
             _jsRuntime = jsRuntime;
             _languageService = languageService;
-
+            _navigationManager = navigationManager;
             MainPageTitleDefault = languageService.Translate("MainTitle");
         }
 
@@ -40,6 +45,20 @@ namespace AiGallery.Services
             }
             return title;
         }
+        
+        
+        public string GetMainImageUrl(int ImageStripId)
+        {
+            if (ImageStripId > 0)
+            {
+                List<Image> images = DbManager.getStripImages(ImageStripId, _dbContext);
+                Image image = images.Where(s => s.Id == 1).First();
+                return _navigationManager.BaseUri + image.RelativePath.Substring(1);
+            }
+            else
+                return "";
+        }
+
 
         public async Task SetTitleJS(int? ImageStripId = null)
         {
