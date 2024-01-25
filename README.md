@@ -1,6 +1,6 @@
 <h1 align="center" id="title">AiGallery</h1>
 
-<p id="description">This is a simple demo project in Blazor. It consists of a gallery of images that the user can browse. Images are grouped into image collections. Each collection and each individual image has its own description saved in a SQLite database.
+<p id="description">This is a simple demo project in Blazor (Interactive Server rendering - Web App project template with .NET 8). It consists of a gallery of images that the user can browse. Images are grouped into image collections. Each collection and each individual image has its own description saved in a SQLite database.
 The user can scroll through the various images or upload their own images</p>
 
 <h2> Demo</h2>
