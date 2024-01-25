@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <!-- <base href="/TelmarG/">  -->
+     <base href="/"> 
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="AiGallery.styles.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/material-base.css">
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+
+    <script>
+        function changeDocumentTitle(newTitle) {
+            document.title = newTitle;
+
+            var ogTitleElement = document.getElementById('ogTitle');
+            if (ogTitleElement) {
+                ogTitleElement.setAttribute('content', newTitle);
+            }
+        }
+    </script>
+
+    <script>
+        window.addBodyClass = (className) => {
+            document.body.classList.add(className);
+        };
+        window.removeBodyClass = (className) => {
+            document.body.classList.remove(className);
+        };
+    </script>
+
+
+    <HeadOutlet />
+</head>
+
+<body>
+    
+    <Routes @rendermode=RenderMode.InteractiveServer />
+    <div id="reconnect-modal" style="display: none;"></div>
+    <script src="_framework/blazor.web.js" autostart="false"></script>
+    <script src="boot.js"></script>
+   
+</body>
+
+</html>
+
+

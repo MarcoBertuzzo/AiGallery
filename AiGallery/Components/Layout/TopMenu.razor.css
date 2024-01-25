@@ -1,0 +1,40 @@
+﻿header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.header-brand {
+    text-decoration: none; 
+    display: flex;
+    align-items: center;
+}
+
+
+header img {
+    height: 40px;
+}
+
+.logo-text {
+    flex: auto;
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: 10px; 
+}
+
+header ::deep a.nav-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    padding: 10px 20px;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+}
+
+    header ::deep a.nav-link:hover {
+        background-color: #333;
+        color: #ffffff;
+    }

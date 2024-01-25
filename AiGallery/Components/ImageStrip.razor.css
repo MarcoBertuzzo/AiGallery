@@ -1,0 +1,76 @@
+﻿
+
+.overlay {
+    position: fixed; /* Posizionamento fisso rispetto alla viewport */
+    top: 0; /* Posiziona l'overlay in cima alla pagina */
+    left: 0; /* Posiziona l'overlay a sinistra della pagina */
+    width: 100%; /* Larghezza dell'overlay pari alla larghezza della viewport */
+    height: 100vh; /* Altezza dell'overlay pari all'altezza della viewport */
+    background: rgba(0, 0, 0, 0.5); /* Colore di sfondo semitrasparente (opzionale) */
+    z-index: 1000; /* Assicurati che sia più alto di qualsiasi altro elemento della pagina */
+    display: flex; /* Utilizza flexbox per centrare l'immagine */
+    flex-wrap: wrap;
+    justify-content: center; /* Centra orizzontalmente l'immagine */
+    align-items: center; /* Centra verticalmente l'immagine */
+    /*overscroll-behavior: contain !important;*/
+    overflow-y: auto;
+}
+
+    .overlay img {
+        max-width: 100%; /* Assicurati che l'immagine non superi la larghezza dell'overlay */
+        max-height: 90%; /* Assicurati che l'immagine non superi l'altezza dell'overlay */
+        margin-bottom:10px;
+    }
+
+    .overlay ul {
+        margin:0;
+        padding:0;
+    }
+
+
+.close-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: none;
+    font-size: 40px;
+    cursor: pointer;
+    color: white;
+}
+
+
+.icon-left, .icon-right {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 30px; /* O la dimensione desiderata */
+    color: white; /* O il colore desiderato */
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.icon-left {
+    left: 10px;
+}
+
+.icon-right {
+    right: 10px;
+}
+
+figcaption {
+    color: white;
+    font-size: x-large;
+    text-align: center;
+    max-width: 100%;
+    background:#191919; 
+}
+
+@media (max-width: 800px) {
+    figcaption {
+        font-size: medium;
+        color: #666; /* Nuovo colore per schermi più piccoli */
+        /* Aggiungi altri stili necessari per schermi più piccoli */
+    }
+}

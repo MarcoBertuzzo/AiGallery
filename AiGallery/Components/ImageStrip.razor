@@ -1,0 +1,114 @@
+﻿
+
+@inject MyDbContext myDbContext
+@inject IJSRuntime JSRuntime 
+@inject LanguageService LanguageService
+@inject NavigationManager NavigationManager
+
+
+@if (ImageStripId>0)
+{
+    <div @ref="OverlayDiv" class="overlay" @onkeydown="HandleKeyDown" tabindex="0">
+        <button class="close-button" @onclick="CloseImageStrip">X</button>
+        
+        <button class="icon-left" @onclick="prevStrip">❮</button>
+
+        @if (Images != null && Images.Count > 0)
+        {
+            <ul>
+                @foreach (var image in Images!)
+                {
+                    <li @onkeydown="HandleKeyDown">
+                        <figure>
+                            <figcaption>@GetImageDescription(image)</figcaption>
+                            <img src="@image.RelativePath" alt="@GetImageDescription(image)" />
+                    
+                        </figure>
+                    </li>
+                }
+            </ul>
+        }
+        
+        <button class="icon-right" @onclick="nextStrip">❯</button>
+
+    </div>
+}
+
+
+
+
+@code {
+
+    [Parameter]
+    public int ImageStripId { get; set; }
+
+    List<Image> Images = new List<Image>();
+
+    ElementReference OverlayDiv;
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+            await LoadImages();
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (OverlayDiv.Id != null)
+        {
+            await OverlayDiv.FocusAsync();
+        }
+
+        if (ImageStripId > 0)
+            await JSRuntime.InvokeVoidAsync("addBodyClass", "noscroll"); //executes addBodyClass() function defined in App.razor => adds noscroll class to <body> => in app.css the scrolling of the main window under the strip image overlay is disabled (this scrolling would cause display problems)
+    }
+
+
+    private async Task CloseImageStrip()
+    {
+        NavigationManager.NavigateTo("/");
+        await JSRuntime.InvokeVoidAsync("removeBodyClass", "noscroll"); //executes reomveBodyClass() function defined in App.razor => removes noscroll class at <body> => in app.css scrolling of the main window is re-enabled after closing the strip image overlay (this scrolling with the overlay would cause problems with the display)
+    }
+
+    private void prevStrip()
+    {
+        int prevStripId = DbManager.GetPreviousOrNextStripId(ImageStripId, false, myDbContext);
+        NavigationManager.NavigateTo("/" + prevStripId);
+
+    }
+
+    private void nextStrip()
+    {
+        int nextStripId = DbManager.GetPreviousOrNextStripId(ImageStripId, true, myDbContext);
+        NavigationManager.NavigateTo("/" + nextStripId);
+    }
+
+
+    private async Task LoadImages()
+    {
+        if (ImageStripId > 0)
+        {
+            Images = await DbManager.getStripImages(ImageStripId, myDbContext);
+        }
+    }
+
+
+    public string GetImageDescription(Image image)
+    {
+        return (LanguageService.CurrentLanguage == UserLanguage.Italian ? image.Description_Ita : image.Description_Eng);
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key.ToLower() == "escape")
+        {
+            await CloseImageStrip();
+        }
+    }
+
+}
+
+
+
+

@@ -1,0 +1,250 @@
+﻿@page "/load-images"
+@rendermode InteractiveServer
+
+@inject ILogger<LoadImages> Logger
+@inject IWebHostEnvironment Environment
+@inject MyDbContext MyDbContext
+@inject LanguageService LanguageService
+
+@using System.ComponentModel.DataAnnotations
+
+
+<div class="container">
+
+    @if (!formSubmitted)
+    {
+
+        <div class="row">
+            <div class="col-md-8 mx-auto text-center">
+                <h1 class="display-4">@(LanguageService.Translate("LoadImagesH1"))</h1>
+                <p class="lead">@(LanguageService.Translate("LoadImagesP1"))</p>
+                <p class="lead">@(LanguageService.Translate("LoadImagesP2"))</p>
+                <p class="lead">@(LanguageService.Translate("LoadImagesP3"))</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+
+                        <EditForm Model="user" OnValidSubmit="Send" class="row g-3 needs-validation">
+                            <DataAnnotationsValidator />
+
+                            <fieldset>
+
+                                <div class="col-md-6 mt-1">
+                                    <label class="form-label" for="Name">@(LanguageService.Translate("Name")):</label>
+                                    <InputText id="Name" @bind-Value="user.Name" class="form-control" />
+
+                                </div>
+                                <div>
+                                    <ValidationMessage For="@(() => user.Name)" />
+                                </div>
+
+
+                                <div class="col-md-6 mt-3">
+                                    <label class="form-label" for="Name">@(LanguageService.Translate("Email")):</label>
+                                    <InputText id="Email" @bind-Value="user.Email" class="form-control" />
+                                </div>
+                                <div>
+                                    <ValidationMessage For="@(() => user.Email)" />
+                                </div>
+
+
+                                <div class="col-md-9 mt-3">
+                                    <label class="form-label" for="Name">@(LanguageService.Translate("Note")):</label>
+                                    <InputTextArea id="Note" @bind-Value="user.Note" class="form-control" />
+                                </div>
+                                <div>
+                                    <ValidationMessage For="@(() => user.Note)" />
+                                </div>
+
+
+                                <div class="col-md-4 mt-3">
+                                    <label class="form-label" for="FileZip">@(LanguageService.Translate("ImagesToUpload")):</label>
+                                    @foreach (var fileInput in user.FileUploads)
+                                    {
+                                        <p>
+                                            <InputFile  @key=@(_inputFileId) disabled="@(isLoading)" OnChange="@((e)=> HandleInputFile(e))" accept=".jpg,.jpeg,.png,.bmp" />
+                                        </p>
+                                    }
+                                </div>
+
+                                <div>
+                                    <ValidationMessage For="@(() => user.FileUploads)" />
+                                </div>
+                                
+
+
+                                <button type="submit" class="btn btn-primary mt-2">@(LanguageService.Translate("Send"))</button>
+
+                                @if (!string.IsNullOrEmpty(formError))
+                                {
+                                    <pre class="alert alert-warning mt-3">@formError</pre>
+                                }
+                            </fieldset>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="alert alert-success mt-3">@(LanguageService.Translate("DataSentSuccessfully"))!</p>
+    }
+
+</div>
+
+
+
+@code {
+
+    public UserModel user = new UserModel();
+    private bool formSubmitted;
+    private string formError = "";
+    private string _inputFileId = "";
+    private long maxFileSize = 10 * 1024 * 1024;
+    private int maxAllowedFiles = 10;
+    private bool isLoading;
+
+    public class FileUpload
+    {
+        public InputFile inputFile;
+        public IBrowserFile browserFile;
+    }
+
+    public class UserModel
+    {
+        [Display(Name = "Name", ResourceType = typeof(Resources.Resources))]
+        [Required(ErrorMessageResourceName = "PleaseEnterYour_0_", ErrorMessageResourceType = typeof(Resources.Resources))]
+        [StringLength(30, ErrorMessageResourceName = "MustNotExceed30Characters", ErrorMessageResourceType = typeof(Resources.Resources))]
+        public string? Name { get; set; } = default!;
+
+
+        [Display(Name = "Email", ResourceType = typeof(Resources.Resources))]
+        [Required(ErrorMessageResourceName = "PleaseEnterYour_0_", ErrorMessageResourceType = typeof(Resources.Resources))]
+        [EmailAddress(ErrorMessageResourceName = "PleaseProvideAvalid_0_", ErrorMessageResourceType = typeof(Resources.Resources))]
+        [StringLength(100, ErrorMessageResourceName = "MustNotExceed100Characters", ErrorMessageResourceType = typeof(Resources.Resources))]
+        public string? Email { get; set; } = default!;
+
+        [Display(Name = "Note", ResourceType = typeof(Resources.Resources))]
+        [StringLength(500, ErrorMessageResourceName = "MustNotExceed500Characters", ErrorMessageResourceType = typeof(Resources.Resources))]
+        public string Note { get; set; } = default!;
+
+        [FileUpdateValidator]
+        public List<FileUpload> FileUploads { get; set; } = default!;
+    }
+
+
+    public class FileUpdateValidator : ValidationAttribute
+    {
+
+
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            LanguageService? languageService = (LanguageService?)validationContext.GetService(typeof(LanguageService));
+
+            if (languageService != null && value != null && (((List<FileUpload>)value)[0]).browserFile != null)
+                return ValidationResult.Success;
+
+            //return new ValidationResult(this.ErrorMessageResourceName ?? "Upload an image", new[] { validationContext.MemberName });
+            return new ValidationResult(languageService!.Translate("UploadAtLeastOneImage") ?? "Upload an image", new[] { validationContext.MemberName });
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+
+    }
+
+    protected override void OnInitialized()
+    {
+        formSubmitted = false;
+        InitializeInputFiles();
+    }
+
+    private void InitializeInputFiles()
+    {
+        user.FileUploads = new List<FileUpload>();
+        user.FileUploads.Add(new FileUpload());
+    }
+
+    public void HandleInputFile(InputFileChangeEventArgs e)
+    {
+        user.FileUploads[user.FileUploads.Count - 1].browserFile = e.GetMultipleFiles(1)[0];
+        FileUpload fileUpload = new FileUpload();
+        fileUpload.inputFile = new InputFile();
+        user.FileUploads.Add(fileUpload);
+    }
+
+    public async void Send()
+    {
+        isLoading = true;
+
+        int userId = DbManager.addUser(user.Name, user.Email, user.Note, MyDbContext);
+
+        formError = "";
+        foreach (var fileInput in user.FileUploads)
+        {
+            try
+            {
+                if (fileInput.browserFile != null)
+                {
+
+                    var trustedFileName = Path.GetRandomFileName();
+
+                    var path = Path.Combine(Environment.ContentRootPath, Environment.EnvironmentName, "uploads", userId.ToString("000000"));
+
+                    if (!Directory.Exists(path))
+                    {
+                        try
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+
+                    using (FileStream fs = new(Path.Combine(path, trustedFileName), FileMode.Create))
+                    {
+                        var x = fileInput.browserFile.OpenReadStream(maxFileSize);
+                        await x.CopyToAsync(fs);
+
+                    }
+
+                    Logger.LogInformation("File Uploaded - Original file name:{OriginalFileName} , New file name:{NewFileName} ", fileInput.browserFile.Name, trustedFileName);
+
+                    DbManager.addUserImage(userId, trustedFileName, MyDbContext);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                formError += (formError != "" ? "\n" : "") + ex.Message;
+                Logger.LogError("File: {Filename} Error: {Error}", (fileInput.browserFile != null ? fileInput.browserFile.Name : ""), ex.Message);
+            }
+        }
+
+        isLoading = false;
+
+        if (formError == "")
+        {
+            user.FileUploads.Clear();
+            formSubmitted = true;
+        }
+        else
+        {
+            _inputFileId = Guid.NewGuid().ToString();
+            InitializeInputFiles();
+        }
+
+        StateHasChanged();
+    }
+}

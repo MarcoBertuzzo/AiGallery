@@ -1,0 +1,99 @@
+﻿@page "/{ImageStripId:int?}/{StripTitle?}"
+@rendermode InteractiveServer
+
+@inject MyDbContext myDbContext
+@inject NavigationManager NavigationManager
+@inject TitleService TitleService
+
+
+<PageTitle>@TitleService.GetTitle(ImageStripId)</PageTitle>
+
+<HeadContent>
+    <meta property="og:title" content="@TitleService.GetTitle(ImageStripId)" id="ogTitle" />
+</HeadContent>
+
+
+@if (ImageStripId == 0) //shows the general gallery with the covers of the various strips
+{
+    <div class="container">
+        <div class="row">
+
+            <Virtualize ItemsProvider="@LoadImages" Context="image">
+
+                <ItemContent>
+                    <StripCover ImageCover="image" />
+                </ItemContent>
+
+                <Placeholder>
+                    Loading...
+                </Placeholder>
+
+            </Virtualize>
+
+        </div>
+    </div>
+}
+else //shows a single strip
+{
+    <ImageStrip @ref="ImageStrip" ImageStripId=ImageStripId></ImageStrip>
+}
+
+
+@code
+{
+    [Parameter]
+    public int ImageStripId { get; set; }
+
+    [Parameter]
+    public string? StripTitle { get; set; }
+
+    private ImageStrip ImageStrip = default!;
+
+    protected override void OnInitialized()
+    {
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (ImageStripId > 0)
+            increaseViewsCounter();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        SetCurrentUrl();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await TitleService.SetTitleJS(ImageStripId);
+    }
+
+    private void increaseViewsCounter()
+    {
+        Data.DbManager.increaseViewsCounter((int)ImageStripId!, myDbContext);
+    }
+
+    private async ValueTask<ItemsProviderResult<Strip>> LoadImages(ItemsProviderRequest request)
+    {
+        var (images, totalItemCount) = await GetImagesPage(request.StartIndex, request.Count, request.CancellationToken);
+        return new ItemsProviderResult<Strip>(images, totalItemCount);
+    }
+
+    public async ValueTask<(List<Strip>, int)> GetImagesPage(int from, int count, CancellationToken cancellationToken)
+    {
+        var result = new List<Strip>();
+        result = await DbManager.getStripRange(from, count, myDbContext);
+
+        return (result, myDbContext.Strips.Count());
+    }
+
+    private void SetCurrentUrl()
+    {
+        if (ImageStripId > 0)
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + ImageStripId + "/" + Utilities.StringUtility.ConvertToPageName(StripTitle));
+        else if (NavigationManager.BaseUri != NavigationManager.Uri)
+            NavigationManager.NavigateTo(NavigationManager.BaseUri);
+    }
+
+}

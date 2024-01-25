@@ -1,0 +1,17 @@
+﻿.imagecard:hover {
+    filter: brightness(60%) !important;
+    border: 4px solid #eee !important;
+    cursor: zoom-in;
+}
+
+.titlecard {
+    position: relative;
+}
+
+.card-views {
+
+}
+
+
+
+

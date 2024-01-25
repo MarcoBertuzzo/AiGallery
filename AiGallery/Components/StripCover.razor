@@ -1,0 +1,35 @@
+﻿@using System.Text
+@using System.Globalization
+@inject LanguageService LanguageService
+
+
+<div class="col-xl-3 col-md-6 mb-4 ">
+    <a href="@(ImageCover.ImageStripId + "/" + Utilities.StringUtility.ConvertToPageName(ImageCover.Title_Eng))">
+    <div class="card border-0 shadow imagecard" style="">
+
+        <img src="@ImageCover.Path" class="card-img-top" alt="" style="max-height:350px" />       
+
+        <div class="card-body text-center titlecard">
+                <h5 class="card-title mb-0">@GetStripTitle(ImageCover)</h5>
+            <span class="card-views mb-0 d-block text-end small">@ImageCover.ViewsCounter views</span>
+        </div>
+
+    </div>
+    </a>
+</div>
+
+
+@code {
+    
+    [Parameter]
+    public Strip ImageCover { get; set; }
+
+
+    public string GetStripTitle(Strip strip)
+    {
+        return (LanguageService.CurrentLanguage == UserLanguage.Italian ? strip.Title_Ita : strip.Title_Eng);
+    }
+
+
+}
+
