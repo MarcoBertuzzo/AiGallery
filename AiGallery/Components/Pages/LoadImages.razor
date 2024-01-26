@@ -178,9 +178,12 @@
     public void HandleInputFile(InputFileChangeEventArgs e)
     {
         user.FileUploads[user.FileUploads.Count - 1].browserFile = e.GetMultipleFiles(1)[0];
-        FileUpload fileUpload = new FileUpload();
-        fileUpload.inputFile = new InputFile();
-        user.FileUploads.Add(fileUpload);
+        if (user.FileUploads.Count < maxAllowedFiles)
+        {
+            FileUpload fileUpload = new FileUpload();
+            fileUpload.inputFile = new InputFile();
+            user.FileUploads.Add(fileUpload);
+        }
     }
 
     public async void Send()
