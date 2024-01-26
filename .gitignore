@@ -40,6 +40,8 @@ bld/
 
 /AiGallery/AiGalleryNoGit.db
 /AiGallery/appsettingsNoGit.json
+/AiGallery/wwwroot/ImagesStrips/
+/AiGallery/Development/
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
@@ -366,3 +368,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /AiGallery/wwwroot/logo_original_NoGit.png
 /AiGallery/appsettingsNoGit.json
+/AiGallery/AiGallery.db-shm
+/AiGallery/AiGallery.db-wal
