@@ -6,6 +6,10 @@
 @inject TitleService TitleService
 
 
+
+
+
+
 <PageTitle>@TitleService.GetTitle(ImageStripId)</PageTitle>
 
 <HeadContent>
@@ -56,6 +60,8 @@ else //shows a single strip
 
     protected override void OnInitialized()
     {
+        // Leggi l'ancora dalla query string
+       var mioAncora = NavigationManager.Uri.Split('#').LastOrDefault();
     }
 
     protected override void OnParametersSet()
@@ -66,7 +72,6 @@ else //shows a single strip
 
     protected override void OnAfterRender(bool firstRender)
     {
-        SetCurrentUrl();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -93,12 +98,5 @@ else //shows a single strip
         return (result, myDbContext.Strips.Count());
     }
 
-    private void SetCurrentUrl()
-    {
-        if (ImageStripId > 0)
-            NavigationManager.NavigateTo(NavigationManager.BaseUri + ImageStripId + "/" + Utilities.StringUtility.ConvertToPageName(StripTitle));
-        else if (NavigationManager.BaseUri != NavigationManager.Uri)
-            NavigationManager.NavigateTo(NavigationManager.BaseUri);
-    }
 
 }

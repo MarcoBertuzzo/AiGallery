@@ -38,6 +38,8 @@ bld/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 
+/AiGallery/*.db
+/AiGallery/AiGallery.db
 /AiGallery/AiGalleryNoGit.db
 /AiGallery/appsettingsNoGit.json
 /AiGallery/wwwroot/ImagesStrips/

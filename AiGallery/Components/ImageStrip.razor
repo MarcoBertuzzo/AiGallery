@@ -1,6 +1,4 @@
-﻿
-
-@inject MyDbContext myDbContext
+﻿@inject MyDbContext myDbContext
 @inject IJSRuntime JSRuntime 
 @inject LanguageService LanguageService
 @inject NavigationManager NavigationManager
@@ -59,16 +57,12 @@
         {
             await OverlayDiv.FocusAsync();
         }
-
-        if (ImageStripId > 0)
-            await JSRuntime.InvokeVoidAsync("addBodyClass", "noscroll"); //executes addBodyClass() function defined in App.razor => adds noscroll class to <body> => in app.css the scrolling of the main window under the strip image overlay is disabled (this scrolling would cause display problems)
     }
 
 
-    private async Task CloseImageStrip()
+    private void CloseImageStrip()
     {
         NavigationManager.NavigateTo("/");
-        await JSRuntime.InvokeVoidAsync("removeBodyClass", "noscroll"); //executes reomveBodyClass() function defined in App.razor => removes noscroll class at <body> => in app.css scrolling of the main window is re-enabled after closing the strip image overlay (this scrolling with the overlay would cause problems with the display)
     }
 
     private void prevStrip()
@@ -99,11 +93,11 @@
         return (LanguageService.CurrentLanguage == UserLanguage.Italian ? image.Description_Ita : image.Description_Eng);
     }
 
-    private async Task HandleKeyDown(KeyboardEventArgs e)
+    private void HandleKeyDown(KeyboardEventArgs e)
     {
         if (e.Key.ToLower() == "escape")
         {
-            await CloseImageStrip();
+             CloseImageStrip();
         }
     }
 
